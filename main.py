@@ -1,13 +1,12 @@
 import os
 from dotenv import load_dotenv
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI
 from fastapi_sqlalchemy import DBSessionMiddleware
-from fastapi.exception_handlers import http_exception_handler
-from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
-from starlette.requests import Request
-from starlette.responses import JSONResponse
 from database import Database
+
+from identity_reconciliation.controllers.contacts import router as contact_router
+from identity_reconciliation.lib.logger import logger
 
 # Initialize FastAPI
 app = FastAPI()
@@ -20,6 +19,8 @@ DB_HOST = os.getenv("DB_HOST")
 DB_NAME = os.getenv("DB_NAME")
 DB_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
 
+print(f"DB_URL: {DB_URL}")
+
 engine_args = {
     "pool_size": 20,  # Maximum number of database connections in the pool
     "max_overflow": 50,  # Maximum number of connections that can be created beyond the pool_size
@@ -29,6 +30,9 @@ engine_args = {
 }
 
 app.add_middleware(DBSessionMiddleware, db_url=DB_URL, engine_args=engine_args)
+
+# routers for controllers
+app.include_router(contact_router, prefix="/api/contact")
 
 
 # Configure CORS middleware
