@@ -33,7 +33,7 @@ async def create_contact(request: CreateContactRequest):
         raise HTTPException(status_code=500, detail="Error while creating contact")
 
 
-@router.get("/identify")
+@router.post("/identify")
 async def identify_contact(request: IdentifyContactRequest):
     session = db.session
     try:
