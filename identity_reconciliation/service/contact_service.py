@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from typing import List, Set
+from typing import List, Set, Tuple, Optional
 from identity_reconciliation.constants.linked_precedence import LinkedPrecedence
 from identity_reconciliation.models.contact import Contact
 from identity_reconciliation.types.response.identify_contact_response import IdentifyContactResponse, ContactResponse
@@ -65,7 +65,7 @@ class ContactService:
 
         return list(emails), list(phone_numbers), list(secondary_contact_ids)
 
-    def __determine_primary_contact_id(self, contacts: List[Contact]) -> int:
+    def __determine_primary_contact_id(self, contacts: List[Contact]) -> tuple[int, Optional[int]]:
         primary_contact_id = None
         secondary_contact_id = None
         for contact in contacts:
